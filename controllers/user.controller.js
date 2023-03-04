@@ -1,5 +1,5 @@
 const User = require("../models/user.model");
-const createError = require("../../../classroom/backend/utils/create.error");
+const createError = require("../utils/create.error");
 
 const removeUser = async (req, res, next) => {
   const getUser = await User.findById(req.params.id);
