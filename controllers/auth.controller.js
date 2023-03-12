@@ -1,4 +1,5 @@
 const User = require("../models/user.model");
+const Cart = require("../models/cart.model");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const createError = require("../utils/create.error");
@@ -17,20 +18,22 @@ const signupUser = async (req, res, next) => {
     password: hashPass,
   });
 
-  await createUser
-    .save()
-    .then((result) => {
-      return res.status(201).json({
-        message: "Successfully Registered",
-        data: { email: result.email },
-      });
-    })
-    .catch((err) => {
-      if (err.name === "MongoServerError" && err.code === 11000) {
-        return next(createError(409, "Email already taken"));
-      }
-      return next(createError(400, "Something went wrong"));
+  try {
+    const savedUser = await createUser.save();
+
+    const emptyCart = new Cart({ userId: savedUser._id });
+    await emptyCart.save();
+
+    return res.status(201).json({
+      message: "Successfully Registered",
+      data: { email: savedUser.email },
     });
+  } catch (err) {
+    if (err.name === "MongoServerError" && err.code === 11000) {
+      return next(createError(409, "Email already taken"));
+    }
+    return next(createError(400, "Something went wrong"));
+  }
 };
 
 const signinUser = async (req, res, next) => {

@@ -10,6 +10,7 @@ const dotenv = require("dotenv");
 
 const authRoute = require("./routes/auth.route");
 const userRoute = require("./routes/user.route");
+const cartRoute = require("./routes/cart.route");
 
 /* CONFIGURATION */
 dotenv.config();
@@ -25,6 +26,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 /* ROUTER */
 app.use("/api/auth", authRoute);
 app.use("/api/user", userRoute);
+app.use("/api/cart", cartRoute);
 
 app.use((err, req, res, next) => {
   return res
