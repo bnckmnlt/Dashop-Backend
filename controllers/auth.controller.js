@@ -20,10 +20,8 @@ const signupUser = async (req, res, next) => {
 
   try {
     const savedUser = await createUser.save();
-
-    const emptyCart = new Cart({ userId: savedUser._id });
-    await emptyCart.save();
-
+    const createCart = new Cart({ userId: savedUser._id.toString() });
+    await createCart.save();
     return res.status(201).json({
       message: "Successfully Registered",
       data: { email: savedUser.email },
@@ -32,7 +30,7 @@ const signupUser = async (req, res, next) => {
     if (err.name === "MongoServerError" && err.code === 11000) {
       return next(createError(409, "Email already taken"));
     }
-    return next(createError(400, "Something went wrong"));
+    return next(createError(400, err.message));
   }
 };
 
